@@ -16,7 +16,7 @@ This guide will cover and explain more aspects of the installation than what you
 
 If you haven't a QWERTY keyboards, you may want to change the layout :
 
-- `localectl list-keymaps` to list the keymaps (obviously)
+- `localectl list-keymaps` to list the keymaps (obviously).
 
 and
 
@@ -24,7 +24,7 @@ and
 
 **For HiDPI monitors :**
 
-- `setfont ter-132b`
+- `setfont ter-132b`.
 
 > [!NOTE]
 > BIOS technology is outdated, I will consider you are using UEFI.
@@ -33,21 +33,24 @@ and
 
 This step is only for wifi users.
 
-There are two network managers available in the installation medium, I will use `network-manager`.
-
-- `nmcli device` to list your network interfaces.
-- `nmcli device wifi list` to list the available access points.
-- `nmcli device wifi connect [SSID] password [password]` (replace the items inside brackets)
+- Run the `iwctl` utility.
+- If you want help, type `help`.
+- `device list`.
+- If the device is turned off, `device *device* set-property Powered on` then `adapter adapter set-property Powered on`.
+- `station *device* scan`.
+- `station *device* get-networks`.
+- `station *device* connect *SSID*`.
+- Then we can Ctrl+d to exit.
 
 You should be connected, try to send a ping to check your connection :
 
-- `ping -4c4 1.1.1.1`
+- `ping -4c4 1.1.1.1`.
 
 If there's a response, it works! Next step.
 
 It's time to set up the system clock :
 
-- `timedatectl set-ntp true`
+- `timedatectl set-ntp true`.
 - `timedatectl status` to check everything is fine.
 Fine, let's go ahead.
 
@@ -56,7 +59,8 @@ Fine, let's go ahead.
 This part is quite subjective, there are a lot of ways to do it. I will covers some aspects here but you should define your needs first and make more researchs about what you're about to do.
 
 - Do `lsblk` to identify your disk(s), if you have a SATA connected drive, it will be named *sdX* where "X" is the letter of the disk. If you have a nvme ssd, it will be named *nvmeXn1* where "X" is the ssd number.
+- We will use `gdisk` to partition our disk(s).
 
 ### Classical way
 
-
+- Do `gdisk /dev/sd*X*`.
