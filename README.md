@@ -20,7 +20,7 @@ and
 
 `setfont ter-132b`
 
-> [!INFO]
+> ![INFO]
 > BIOS technology is outdated, I will consider you are using UEFI.
 
 **Connect to the internet** 
