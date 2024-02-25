@@ -132,7 +132,7 @@ Then, we will now install the base system :
 
 Here is the command I recommend to use, but note that it's my personnal preferences, select the packages you want instead of copying this line blindly :
 
-- `pacstrap -i /mnt base{,-devel} dkms linux{{,-lts}{,-headers},firmware} git man-{db,pages} vim networkmanager openssh polkit zsh{,{-autosuggestions,completions,history-substring-search,syntax-highlighting}} tmux tldr texinfo`.
+- ```pacstrap -i /mnt base{,-devel} dkms linux{{,-lts}{,-headers},firmware} git man-{db,pages} vim networkmanager openssh polkit zsh{,{-autosuggestions,completions,history-substring-search,syntax-highlighting}} tmux tldr texinfo```.
 
 - Create the fstab file with `genfstab -U /mnt >> /mnt/etc/fstab`
 
