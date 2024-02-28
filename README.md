@@ -14,7 +14,7 @@ This guide will cover and explain more aspects of the installation than what you
 
 # First commands:
 
-If you haven't a QWERTY keyboards, you may want to change the layout:
+If you don't have  a QWERTY keyboard, you may want to change the layout:
 
 - `localectl list-keymaps` to list the keymaps (obviously).
 
@@ -210,7 +210,81 @@ To install it:
 
 Now, to be able to boot into your system, you have to do this:
 
-- `echo "\"Arch Linux\" \"root=UUID=$(blkid -o value -s UUID /dev/sdX) > /boot/refind\_linux.conf\"` where *sdX* is your root partition.
-- `echo resume=UUID=$(blkid -o value -s UUID /dev/sdX) >> /boot/refind\_linux.conf` where *sdX* is your swap partition (not necessary if you don't have a swap partition).
+- `echo Arch Linux root=UUID=$(blkid -o value -s UUID /dev/sdX) > /boot/refind_linux.conf` where *sdX* is your root partition.
+- `echo resume=UUID=$(blkid -o value -s UUID /dev/sdX) >> /boot/refind_linux.conf` where *sdX* is your swap partition (not necessary if you don't have a swap partition).
+
+The file should look like this :
+
+```
+"Arch Linux"    "root=UUID=[The uuid of your root partition] resume=UUID=[The uuid of the SWAP partition] rw initrd=[UCODE].img initrd=initramfs-%v.img [EXTRA]
+```
+
+Where **[UCODE]** is the name of the microcode you've installed earlier *(AMD or Intel)* and **[EXTRA]** are extra kernel parameters like "splash" and/or "quiet".
+
+### Final
+
+Now, we have a minimal installation, we could quit and reboot like that :
+
+- `Ctrl + d` and then `umount -R /mnt`.
+- Then `reboot now`.
+
+- After logging in as the root user, you have to do `timedatectl status` to check the time.
+
+But, if you want to achieve this guide correctly, let's continue a bit...
+
+### Final touches
 
 
+#### Creating a user
+
+To create a user :
+
+- `useradd -m -U -G wheel -s /bin/zsh [USERNAME]`.
+
+- `-m` to create a home directory for the new user ;
+- `-U` to create a group with the same name as the user ;
+- `-G` to add supplementary groups to the new user, `wheel` here ;
+- `-s` to change the default shell of the new user ;
+- **[USERNAME]** being the username you want.
+
+Then to change the new user's password:
+
+- `passwd [USERNAME]`
+
+Then, you can do `visudo` to edit the sudoers file and uncomment the line `# %wheel ALL=(ALL) ALL`.
+
+#### Getting the wifi
+
+To connect the internet, if you're not wired, you have the choice:
+
+- Use `ntmui` to have a ui to NetworkManager ;
+- Or use the following commands to connect:
+    - `nmcli device wifi list`;
+    - `nmcli device wifi connect [SSID] password [PASSWORD].
+
+- Then, if everything seems to be working, test your connection with a simple `ping -4c4 1.1.1.1`.
+
+#### Configure pacman
+
+Do you remember, ~~president Nixon~~ what we did at the beginning? We must do the same now.
+
+- Open the file `/etc/pacman.conf` and uncomment these lines:
+    - `# Color` ;
+    - `# ParallelDownloads = 5`.
+- Then, do `pacman -Syu` to update pacman's configuration and perform any updates available.
+
+#### Install an AUR helper
+
+This step is not mandatory but I highly recommend it to enjoy the particularities of Arch Linux.
+
+`Paru` in my opinion is a good choice, it's a wrapper for Pacman that can install AUR packages.
+
+[Here's the link to paru](github.com/Morganamilo/paru)
+
+# Finally, you have a well running minimal Arch Linux installation! Don't forget to make care of what you are doing with it, things can break easily. Have fun with it!
+
+TODO:
+
+- [ ] Add a BTRFS section ;
+- [ ] Add a LVM section ;
+- [ ] Go deeper in the subject.
