@@ -178,7 +178,7 @@ Then, we will now install the base system:
 
 Here is the command I recommend to use, but note that it's my personnal preferences, select the packages you want instead of copying this line blindly:
 
-- ```pacstrap -i /mnt base{,-devel} dkms linux{{,-lts}{,-headers},-firmware} git man-{db,pages} vim networkmanager openssh polkit zsh{,-{autosuggestions,completions,history-substring-search,syntax-highlighting}} tmux tldr texinfo```.
+- `pacstrap -i /mnt base{,-devel} dkms linux{{,-lts}{,-headers},-firmware} git man-{db,pages} vim networkmanager openssh polkit zsh{,-{autosuggestions,completions,history-substring-search,syntax-highlighting}} tmux tldr texinfo`.
 
 - Create the fstab file with `genfstab -U /mnt >> /mnt/etc/fstab`.
 
@@ -187,6 +187,8 @@ Here is the command I recommend to use, but note that it's my personnal preferen
 Now, it's time to do `arch-chroot /mnt` to go into your fresh installed system!
 
 If you forgot to install packages, you can do `pacman -S [package name]` to install them.
+
+- Install the following packages *(if needed)* `xfsprogs` `lvm2` `btrfs-progs`.
 
 To get the right date and hour according to your location, you have to do this command, make sure to replace "Europe" and "Paris" if you need to:
 
@@ -225,6 +227,8 @@ To get the right date and hour according to your location, you have to do this c
 
 - Edit the file `/etc/mkinitcpio.conf` and change `udev` to `systemd` in the `HOOKS` list.
 - Update the initramfs by doing `mkinitcpio -P`.
+
+If you have installed lvm2 or btrfs you may want to add those entries in the HOOKS line into `mkinitcpio.conf`. To know where you should put them, check here : https://wiki.archlinux.org/title/Mkinitcpio .
 
 - Do `passwd` to change the `root` user password.
 
