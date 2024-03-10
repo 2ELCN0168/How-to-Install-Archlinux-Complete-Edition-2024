@@ -14,7 +14,7 @@ This guide will cover and explain more aspects of the installation than what you
 
 # First commands:
 
-If you don't have  a QWERTY keyboard, you may want to change the layout:
+If you don't have a QWERTY keyboard, you may want to change the layout:
 
 - `localectl list-keymaps` to list the keymaps (obviously).
 
@@ -51,7 +51,7 @@ If there's a response, it works! Next step.
 It's time to set up the system clock:
 
 - `timedatectl set-ntp true`.
-- `timedatectl status` to check everything is fine.
+- `timedatectl` to check everything is fine.
 Fine, let's go ahead.
 
 # Partitioning 
@@ -110,7 +110,7 @@ Once you have your partitions, you can type `c` to change their names.
 
 **Format the partitions:**
 
-- `mkfs.fat -F 32 /dev/sdX` for the boot partition.
+- `mkfs.fat -F 32 -n ESP /dev/sdX` for the boot partition.
 - `mkswap /dev/sdX` for the swap partition.
 - `mkfs.ext4 /dev/sdX` for the other partitions.
 
@@ -120,6 +120,52 @@ Once you have your partitions, you can type `c` to change their names.
 - `mount --mkdir /dev/sdX /mnt/[name of the partition]` for `/usr`, `/var`, `tmp`, etc.
 
 - Then, do `lsblk` again to verify if everything is correct.
+
+### LVM 
+
+LVM *(Logical Volume Management)* has the advantage to manage partitions in a logical way. That means your system can be transferred easily as you just have to move the LVM files. It gives you also the advantage to resize your logical partitions and add or remove disks to the party.
+
+Let's begin.
+
+The steps are the same as above but here I will use only an ESP partition *(ef00)* of 5 GB and a standard Linux partition *(8300)* of 400 GB. No swap partitionm I will use zram.
+
+Then, once it's done, this is where the fun begins!
+
+First, we need to create our "PV" *(Physical Volume)*:
+
+- `pvcreate /dev/sdX`, you can use multiple disks to create one PV ;
+- `pvs` to check if the PV has been created.
+
+> [!WARNING]
+> As I don't use Grub2, I need to make a separate boot partition that is not into the LVM. Usually, we put entire disks into PVs but there, as my disk is already partitionned, I will put my second partition into the LVM like that : `pvcreate /dev/nvme0n1p2`.
+
+Then we have to create the VG *(Volume Group)*:
+
+- `vgcreate VG_ARCHLINUX /dev/sdX` ;
+- `vgs` to check again.
+
+Then, create our LVs *(Logical Volumes)*:
+
+The command is `lvcreate`:
+    - `-L` size of the LV ;
+    - `-n` name of the LV.
+
+- `lvcreate -L 150G VG_ARCHLINUX -n home` ;
+- `lvcreate -L 20G VG_ARCHLINUX -n usr` ;
+- `lvcreate -L 5G VG_ARCHLINUX -n tmp` ;
+- `lvcreate -L 10G VG_ARCHLINUX -n var` ;
+- `lvcreate -l 100%FREE VG_ARCHLINUX -n root` *(It's a little "l" here, not a mistake)*.
+
+- `lvs` to check once more.
+
+**Formatting:**
+
+- `mkfs.fat -F 32 -n ESP /dev/sdX` for the boot partition ;
+- `mkfs.xfs /dev/mapper/[VG_NAME]-[lv_name]` do that for all of your LVs, you can choose something else than XFS if you want.
+
+Then, we can do `lsblk -f` to check if everything's ok.
+
+Finally, we need to mount the LVs and the boot partition.
 
 ### Installation
 
@@ -286,5 +332,5 @@ This step is not mandatory but I highly recommend it to enjoy the particularitie
 TODO:
 
 - [ ] Add a BTRFS section ;
-- [ ] Add a LVM section ;
+- [X] Add a LVM section ;
 - [ ] Go deeper in the subject.
